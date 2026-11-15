@@ -1,0 +1,191 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>RECALL</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#f4f3f0;--pn:#fff;--ln:#dcdad4;--tx:#222;--mu:#74726b;--ok:#2e7d4f;--bad:#b5453d;--am:#a8740f;--okb:#2e7d4f22;--badb:#b5453d22;--amb:#a8740f26;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#1b1d1f;--pn:#232629;--ln:#34383c;--tx:#ece8e1;--mu:#9a9a92;--ok:#86bb91;--bad:#e0807a;--am:#e0b055;--okb:#86bb9124;--badb:#e0807a26;--amb:#e0b05526;color-scheme:dark}}
+:root[data-theme=dark]{--bg:#1b1d1f;--pn:#232629;--ln:#34383c;--tx:#ece8e1;--mu:#9a9a92;--ok:#86bb91;--bad:#e0807a;--am:#e0b055;--okb:#86bb9124;--badb:#e0807a26;--amb:#e0b05526;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+#app{max-width:1000px;margin:0 auto;padding:18px 16px 60px}
+h1{font-size:1.5rem;margin:.2em 0}h2{font-size:1.05rem;margin:0 0 10px}h3{font-size:.95rem;margin:14px 0 6px}
+.mu{color:var(--mu)}.sp{flex:1}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0}
+.card{background:var(--pn);border:1px solid var(--ln);border-radius:12px;padding:16px;margin:12px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.stat{background:var(--pn);border:1px solid var(--ln);border-radius:10px;padding:12px}.stat b{display:block;font-size:1.4rem}
+.btn{font:inherit;background:var(--pn);color:var(--tx);border:1px solid var(--ln);border-radius:8px;padding:8px 14px;cursor:pointer;transition:transform .12s,background .2s}
+.btn:hover{background:var(--ln)}.btn:active{transform:scale(.96)}.btn.p{background:var(--ok);color:var(--bg);border-color:var(--ok);font-weight:600}.btn.g{border-color:transparent;background:none;color:var(--mu)}.btn.d{color:var(--bad)}
+input,textarea,select{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--ln);border-radius:8px;padding:8px 10px;width:100%}
+textarea{resize:vertical;min-height:140px}input[type=checkbox]{width:auto}label{display:block;margin:8px 0 3px;color:var(--mu);font-size:.85rem}
+.mat{font:1.15rem/1.8 Georgia,"Iowan Old Style",serif;white-space:pre-wrap;transition:opacity .9s,filter .9s;padding:6px 0}
+.mat.fade{opacity:0;filter:blur(8px)}
+.track{height:5px;background:var(--ln);border-radius:4px;overflow:hidden;margin:8px 0}.track i{display:block;height:100%;background:var(--ok);width:100%;transition:width .3s linear}
+#draft{min-height:55vh;font:1.15rem/1.8 Georgia,serif;border:none;background:transparent;padding:6px 0;outline:none}
+.steps span{padding:3px 10px;border-radius:20px;color:var(--mu)}.steps span.on{background:var(--okb);color:var(--ok);font-weight:600}
+.cols{display:grid;gap:12px;grid-template-columns:1fr}@media(min-width:760px){.cols{grid-template-columns:1fr 1fr}}
+.pane{font:1.05rem/1.9 Georgia,serif}.t{padding:1px 2px;border-radius:3px}
+.t.ok{background:var(--okb)}.t.bad{background:var(--badb);color:var(--bad)}.t.am{background:var(--amb);color:var(--am)}.t.n{color:var(--mu);border-bottom:1px dotted var(--mu)}.t.x{text-decoration:line-through}
+.fx{color:var(--ok);font-weight:600;background:var(--okb);padding:1px 5px;border-radius:4px;animation:pop .4s}@keyframes pop{from{opacity:0;transform:translateY(3px)}}
+.pen input{width:auto;min-width:9ch;color:var(--ok);border:1px dashed var(--ok);padding:1px 6px;font:inherit}
+.ovb{font:.7rem system-ui;border:1px solid var(--ln);background:none;color:var(--mu);border-radius:10px;cursor:pointer;margin:0 3px;padding:0 6px}
+.tag{display:inline-block;padding:2px 9px;border-radius:20px;background:var(--okb);color:var(--ok);font-size:.8rem}
+.item{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--ln);cursor:pointer}.item:first-child{border-top:0}
+.mini{height:4px;background:var(--ln);border-radius:3px;width:90px;overflow:hidden}.mini i{display:block;height:100%;background:var(--ok);transition:width .6s}
+.badge{border:1px solid var(--ln);border-radius:20px;padding:3px 11px;font-size:.82rem;color:var(--mu)}.badge.on{color:var(--ok);border-color:var(--ok)}
+.cb{display:flex;gap:8px;align-items:flex-start;margin:5px 0;color:var(--tx);font-size:.9rem}.pos{color:var(--ok)}.neg{color:var(--bad)}
+.noanim *{transition:none!important;animation:none!important}@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+#toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:8px 16px;border-radius:20px;opacity:0;transition:opacity .3s;pointer-events:none}#toast.on{opacity:1}
+</style></head><body><div id="app"></div><div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),uid=()=>Math.random().toString(36).slice(2,9);
+const DEF={sets:[],session:null,cfg:{mode:'balanced',scale:1,decay:.5,ivl:'10m,1d,3d,7d,14d,30d',fix:'manual',theme:'dark',anim:true,chunk:'paragraph'}};
+let S,view={n:'home'},fading=0,ask=0;const A={};
+try{S=JSON.parse(localStorage.getItem('recall1'))}catch(e){}S=S||structuredClone(DEF);S.cfg={...DEF.cfg,...S.cfg};
+function save(){try{localStorage.setItem('recall1',JSON.stringify(S))}catch(e){toast('Could not save: browser storage is blocked or full')}}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2600)}
+const go=(n,id)=>{view={n,id};ask=0;render();scrollTo(0,0)},gs=id=>S.sets.find(s=>s.id===id),wc=t=>(t.trim().match(/\S+/g)||[]).length,pct=x=>Math.round(x*100)+'%';
+const when=t=>{const d=t-Date.now();if(d<=0)return'now';const m=d/6e4;return m<60?Math.round(m)+' min':m<1440?Math.round(m/60)+' h':Math.round(m/1440)+' d'};
+const dt=t=>new Date(t).toLocaleString([],{dateStyle:'medium',timeStyle:'short'});
+const ivls=()=>{const r=S.cfg.ivl.split(',').map(s=>{const m=s.trim().match(/^([\d.]+)([mhd]?)$/);return m?parseFloat(m[1])*({m:6e4,h:36e5,d:864e5}[m[2]||'d']):0}).filter(Boolean);return r.length?r:[6e5,864e5,2592e5,6048e5,12096e5,2592e6]};
+const secsFor=n=>Math.max(3,Math.round((n<=20?10:n<=50?20:n<=100?30:n<=200?60:n<=400?90:90+(n-400)*.2)*S.cfg.scale));
+const STOP=new Set('a an the of to in on at and or is are was were be been it its this that these those as by for with from'.split(' ')),STG=['Unfamiliar','Learning','Familiar','Proficient','Mastered'];
+const stage=s=>{if(!s.att.length)return 0;const a=s.chunks.reduce((x,c)=>x+c.lvl,0)/s.chunks.length;return a<1.5?1:a<3.5?2:a<5.5?3:4};
+function mkChunks(t,m){t=t.trim();if(m==='whole'||!t)return[t];if(m==='sentence')return(t.match(/[^.!?\n]+[.!?]*["')\]]*/g)||[t]).map(x=>x.trim()).filter(Boolean);const p=t.split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean);return p.length?p:[t]}
+function setChunks(s,arr){const old=s.chunks||[];s.chunks=arr.map((t,i)=>old[i]&&old[i].t===t?old[i]:{id:uid(),t,lvl:0,due:0,last:0})}
+/* ---------- comparison engine ---------- */
+const key=(w,ex)=>ex?w:(w.toLowerCase().replace(/[^\p{L}\p{N}.]/gu,'').replace(/^\.+|\.+$/g,'')||w);
+const toks=cs=>{const o=[];cs.forEach((c,ci)=>(c.match(/\S+/g)||[]).forEach(w=>o.push({w,c:ci})));return o};
+function diff(O,R,ex){const a=O.map(t=>key(t.w,ex)),b=R.map(t=>key(t.w,ex)),n=a.length,m=b.length,L=Array.from({length:n+1},()=>new Int32Array(m+1));
+for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)L[i][j]=a[i]===b[j]?L[i+1][j+1]+1:Math.max(L[i+1][j],L[i][j+1]);
+let i=0,j=0;const ops=[];while(i<n||j<m){if(i<n&&j<m&&a[i]===b[j]){ops.push({t:'eq',i,j});i++;j++}else if(j<m&&(i>=n||L[i][j+1]>=L[i+1][j])){ops.push({t:'ins',j});j++}else{ops.push({t:'del',i});i++}}return ops}
+function analyze(tx,resp,mode){const O=toks(tx),R=toks([resp]),ex=mode==='exact',st=O.map(()=>null),gid=O.map(()=>null);let u=[];
+if(mode==='conceptual'){const rc={},oc={};R.forEach(t=>{const k=key(t.w);rc[k]=(rc[k]||0)+1});O.forEach(t=>{const k=key(t.w);oc[k]=(oc[k]||0)+1});
+ const okO=O.map(t=>{const k=key(t.w);if(STOP.has(k))return 1;if(rc[k]>0){rc[k]--;return 1}return 0});
+ R.forEach((t,j)=>{const k=key(t.w);if(STOP.has(k)||oc[k]>0){oc[k]--;u.push({t:'eq',j,i:-1})}else u.push({t:'gap',kind:'extra',D:[],I:[j]})});
+ let g=null;okO.forEach((o,i)=>{if(o){st[i]='ok';g=null}else{if(!g){g={t:'gap',kind:'miss',D:[],I:[]};u.push(g)}g.D.push(i)}})}
+else{for(const p of diff(O,R,ex)){if(p.t==='eq'){u.push(p);st[p.i]='ok'}else{let g=u[u.length-1];if(!g||g.t!=='gap'){g={t:'gap',D:[],I:[]};u.push(g)}(p.t==='del'?g.D:g.I).push(p.t==='del'?p.i:p.j)}}}
+u.forEach((g,x)=>{if(g.t!=='gap')return;g.id=x;if(!g.kind)g.kind=g.D.length&&g.I.length?'wrong':g.D.length?'miss':'extra';
+ g.neutral=mode==='balanced'&&[...g.D.map(i=>key(O[i].w)),...g.I.map(j=>key(R[j].w))].every(k=>STOP.has(k));
+ g.D.forEach(i=>{gid[i]=x;st[i]=g.neutral?'ok':g.kind})});
+const ex2=ex?null:diff(O,R,true).filter(p=>p.t==='eq').length/(O.length||1);
+return{O,R,u,st,gid,mode,exAcc:ex?null:ex2,gaps:u.filter(g=>g.t==='gap'&&!g.neutral)}}
+function score(an,ov){const pc={};let ok=0;an.O.forEach((t,i)=>{const g=an.st[i]==='ok'||(an.gid[i]!=null&&ov.includes(an.gid[i]));ok+=g;const p=pc[t.c]=pc[t.c]||[0,0];p[1]++;p[0]+=g});
+const acc=an.O.length?ok/an.O.length:0;return{acc,ex:an.mode==='exact'?acc:an.exAcc,pc}}
+const nk=s=>s.trim().split(/\s+/).map(w=>key(w)).join(' ');
+/* ---------- sessions ---------- */
+const txt=(set,ids)=>ids.map(i=>set.chunks.find(c=>c.id===i).t);
+function start(setId,ids,skip){const set=gs(setId);ids=set.chunks.filter(c=>ids.includes(c.id)).map(c=>c.id);if(!ids.length)return toast('Select at least one chunk');
+const secs=secsFor(wc(txt(set,ids).join(' ')));S.session={setId,ids,mode:S.cfg.mode,phase:skip?'recall':'memo',round:0,secs,deadline:Date.now()+secs*1e3,draft:'',resp:'',ov:[],typed:{},fin:0};save();go('session')}
+function finalize(s){if(s.fin)return;const set=gs(s.setId),an=analyze(txt(set,s.ids),s.resp,s.mode),sc=score(an,s.ov),now=Date.now(),iv=ivls(),gaps=an.gaps.filter(g=>!s.ov.includes(g.id));
+gaps.forEach(g=>{if(!g.D.length)return;const k=s.ids[an.O[g.D[0]].c]+'|'+g.D.map(i=>key(an.O[i].w)).join(' '),m=set.miss[k]=set.miss[k]||{t:g.D.map(i=>an.O[i].w).join(' '),n:0,ok:0};m.n++});
+s.ids.forEach((id,ci)=>{const arr=an.O.map((t,i)=>t.c===ci?(an.st[i]==='ok'||s.ov.includes(an.gid[i])?key(t.w):'|'):null).filter(x=>x!==null).join(' ');
+ for(const k in set.miss)if(k.startsWith(id+'|')&&arr.includes(k.split('|')[1]))set.miss[k].ok++;
+ if(s.round===0){const c=set.chunks.find(x=>x.id===id),p=sc.pc[ci]||[0,1],pass=p[0]/p[1]>=.9;c.last=now;
+  if(pass){if(c.lvl===0||now>=c.due)c.lvl=Math.min(6,c.lvl+1);if(c.lvl&&now>=c.due-1||c.lvl===1)c.due=now+iv[Math.min(c.lvl-1,iv.length-1)]}else{c.lvl=Math.max(0,c.lvl-1);c.due=now+iv[0]}}});
+set.att.push({t:now,mode:s.mode,tx:txt(set,s.ids),resp:s.resp,ov:[...s.ov],acc:sc.acc,ex:sc.ex,fixes:gaps.length,wrong:gaps.filter(g=>g.kind==='wrong').length,omit:gaps.filter(g=>g.kind==='miss').length,round:s.round});s.fin=1;save()}
+/* ---------- stats ---------- */
+const dayN=t=>Math.floor((t-new Date(t).getTimezoneOffset()*6e4)/864e5);
+function streaks(){const d=[...new Set(S.sets.flatMap(s=>s.att.map(a=>dayN(a.t))))].sort((a,b)=>a-b);let best=0,run=0,cur=0;d.forEach((x,i)=>{run=i&&x===d[i-1]+1?run+1:1;best=Math.max(best,run)});
+if(d.length&&d[d.length-1]>=dayN(Date.now())-1){cur=1;for(let i=d.length-1;i>0&&d[i]-1===d[i-1];i--)cur++}return{cur,best}}
+const att=()=>S.sets.flatMap(s=>s.att);
+function graph(s){if(s.att.length<2)return'<p class=mu>Complete two attempts to see your progress chart.</p>';const n=s.att.length,P=k=>s.att.map((a,i)=>`${10+i*(280/(n-1))},${70-(a[k]||0)*60}`).join(' ');
+return`<svg viewBox="0 0 300 80" width="100%" height="90"><polyline fill="none" stroke="var(--ok)" stroke-width="2" points="${P('acc')}"/><polyline fill="none" stroke="var(--mu)" stroke-dasharray="3 3" points="${P('ex')}"/></svg><div class=mu style="font-size:.8rem">Solid: accuracy in chosen mode. Dashed: exact wording.</div>`}
+/* ---------- views ---------- */
+function home(){const now=Date.now(),sets=S.sets,all=att(),st=streaks(),due=sets.map(s=>[s,s.chunks.filter(c=>c.last&&c.due<=now)]).filter(x=>x[1].length);
+const weak=sets.flatMap(s=>Object.values(s.miss).filter(m=>m.n>m.ok).map(m=>({s:s.name,...m}))).sort((a,b)=>b.n-b.ok-(a.n-a.ok)).slice(0,5);
+const rec=all.slice(-5).map(a=>a.acc),bs=['Unfamiliar'],subj={};sets.forEach(s=>(subj[s.subject||'General']=subj[s.subject||'General']||[]).push(s));
+const bad=[['First recall',all.length>0],['3-day streak',st.best>=3],['7-day streak',st.best>=7],['Perfect exact recall',all.some(a=>a.ex===1&&wc(a.tx.join(' '))>=10)],['Passed a delayed recall',sets.some(s=>s.chunks.some(c=>c.lvl>=2))],['Proficient set',sets.some(s=>stage(s)>=3)],['Mastered set',sets.some(s=>stage(s)===4)]];
+let h=`<div class=row><h1>RECALL</h1><span class=sp></span><button class=btn data-a=set>Settings</button><button class="btn p" data-a=new>New set</button></div>`;
+if(S.session)h+=`<div class=card><div class=row><b>Unfinished session: ${esc(gs(S.session.setId)?.name||'')}</b><span class=sp></span><button class="btn p" data-a=resume>Resume</button><button class="btn g" data-a=discard>Discard</button></div></div>`;
+h+=`<div class=grid><div class=stat><b>${sets.length}</b>sets</div><div class=stat><b>${due.reduce((n,x)=>n+x[1].length,0)}</b>chunks due</div><div class=stat><b>${st.cur}</b>day streak (best ${st.best})</div><div class=stat><b>${rec.length?pct(rec.reduce((a,b)=>a+b)/rec.length):'-'}</b>recent accuracy</div></div>`;
+if(due.length)h+=`<div class=card><h2>Due for spaced retrieval</h2>${due.map(([s,d])=>`<div class=row>${esc(s.name)} <span class=mu>${d.length} chunk${d.length>1?'s':''}</span><span class=sp></span><button class="btn p" data-a=due data-id="${s.id}">Start</button></div>`).join('')}</div>`;
+else{const nx=sets.flatMap(s=>s.chunks.filter(c=>c.last).map(c=>c.due)).sort((a,b)=>a-b)[0];if(nx)h+=`<p class=mu>Nothing due. Next retrieval in ${when(nx)}.</p>`}
+if(weak.length)h+=`<div class=card><h2>Frequently forgotten</h2>${weak.map(m=>`<div class=row><span>${esc(m.t.slice(0,70))}</span><span class="mu sp">${esc(m.s)}</span><span class=neg>missed ${m.n}x, recalled ${m.ok}x</span></div>`).join('')}</div>`;
+h+=`<h2>Your sets</h2>`;if(!sets.length)h+=`<div class=card>No sets yet. Add some text you want to learn with <b>New set</b>.</div>`;
+for(const k in subj)h+=`<div class=card><h3 style="margin-top:0">${esc(k)}</h3>${subj[k].map(s=>{const g=s.att.length>1?s.att[s.att.length-1].acc-s.att[s.att.length-2].acc:null;return`<div class=item data-a=open data-id="${s.id}"><b>${esc(s.name)}</b><span class=tag>${STG[stage(s)]}</span><span class=sp></span>${g!=null?`<span class="${g>=0?'pos':'neg'}">${g>=0?'+':''}${Math.round(g*100)}%</span>`:''}<div class=mini><i style="width:${s.chunks.reduce((x,c)=>x+c.lvl,0)/s.chunks.length/6*100}%"></i></div></div>`}).join('')}</div>`;
+return h+`<h2>Milestones</h2><div class=row>${bad.map(b=>`<span class="badge ${b[1]?'on':''}">${b[1]?'✓ ':''}${b[0]}</span>`).join('')}</div>`}
+function edit(id){const s=id?gs(id):null,subs=[...new Set(S.sets.map(x=>x.subject).filter(Boolean))];
+return`<button class="btn g" data-a=${s?'open':'home'} data-id="${id||''}">Back</button><h1>${s?'Edit set':'New set'}</h1><div class=card><label>Name</label><input id=f-name value="${esc(s?.name||'')}"><label>Subject / category</label><input id=f-sub list=sl value="${esc(s?.subject||'')}"><datalist id=sl>${subs.map(x=>`<option value="${esc(x)}">`).join('')}</datalist>
+<label>Material (saved exactly as written)</label><textarea id=f-text style="min-height:220px">${esc(s?.text||'')}</textarea>
+<label>Chunking</label><select id=f-ch>${['paragraph','sentence','whole'].map(m=>`<option ${(s?.cm||S.cfg.chunk)===m?'selected':''}>${m}</option>`).join('')}</select>
+${s?`<label>Edit chunks manually (separate with a line containing ===)</label><textarea id=f-chunks>${esc(s.chunks.map(c=>c.t).join('\n===\n'))}</textarea>`:''}
+<div class=row><button class="btn p" data-a=saveset data-id="${id||''}">Save</button></div></div>`}
+function setPage(s){const a=s.att,last=a[a.length-1],nx=s.chunks.filter(c=>c.last).map(c=>c.due).sort((x,y)=>x-y)[0],good=[...a].reverse().find(x=>x.acc>=.9),now=Date.now();
+const forg=c=>Object.entries(s.miss).filter(([k,m])=>k.startsWith(c.id+'|')).reduce((n,[k,m])=>n+m.n,0),wk=Object.values(s.miss).filter(m=>m.n>m.ok).sort((x,y)=>y.n-x.n).slice(0,6);
+return`<button class="btn g" data-a=home>Back</button><div class=row><h1>${esc(s.name)}</h1><span class=tag>${STG[stage(s)]}</span><span class=sp></span><button class=btn data-a=edit data-id="${s.id}">Edit</button><button class="btn d" data-a=del data-id="${s.id}">${ask===s.id?'Confirm delete':'Delete'}</button></div><div class=mu>${esc(s.subject||'General')}, ${wc(s.text)} words, ${s.chunks.length} chunks</div>
+<div class=grid style="margin-top:10px"><div class=stat><b>${a.length}</b>attempts</div><div class=stat><b>${last?pct(last.acc):'-'}</b>latest accuracy</div><div class=stat><b>${last&&last.ex!=null?pct(last.ex):'-'}</b>latest exact</div><div class=stat><b>${a.reduce((n,x)=>n+x.wrong,0)}</b>incorrect facts</div><div class=stat><b>${a.reduce((n,x)=>n+x.omit,0)}</b>omitted</div><div class=stat><b>${nx?when(nx):'-'}</b>next retrieval</div></div>
+<div class=card><h2>Practise</h2><div class=row><button class=btn data-a=selall>All</button><button class=btn data-a=selweak>Weakest</button><button class=btn data-a=seldue>Due</button></div>${s.chunks.map(c=>`<label class=cb><input type=checkbox class=cb-i value="${c.id}" checked><span><b>${c.lvl}/6</b> <span class=mu>${c.last&&c.due<=now?'due, ':''}forgotten ${forg(c)}x</span><br>${esc(c.t.slice(0,110))}${c.t.length>110?'…':''}</span></label>`).join('')}
+<div class=row><button class="btn p" data-a=startsel data-id="${s.id}">Memorise, then recall</button><button class=btn data-a=startsel data-skip=1 data-id="${s.id}">Recall only</button></div><div class=mu>Select every chunk for full recall, or just some for targeted recall.${last?` Last successful recall: ${good?dt(good.t):'none yet'}.`:''}</div></div>
+<div class=card><h2>Progress</h2>${graph(s)}</div>${wk.length?`<div class=card><h2>Frequently forgotten</h2>${wk.map(m=>`<div class=row>${esc(m.t.slice(0,80))}<span class="sp"></span><span class=neg>missed ${m.n}x</span></div>`).join('')}</div>`:''}
+<div class=card><h2>History</h2>${a.length?[...a].reverse().map((x,r)=>{const i=a.length-1-r,p=a[i-1];return`<div class=item data-a=insp data-id="${s.id}" data-i="${i}"><span>#${i+1}</span><span class=mu>${dt(x.t)}</span><span class=sp></span><span>${pct(x.acc)}</span><span class=mu>${x.mode}, ${x.fixes} fix</span>${p?`<span class="${x.acc>=p.acc?'pos':'neg'}">${x.acc>=p.acc?'+':''}${Math.round((x.acc-p.acc)*100)}%</span>`:''}</div>`}).join(''):'<p class=mu>No attempts yet.</p>'}</div>`}
+function origHTML(an,ov){let h='';an.O.forEach((t,i)=>{if(i&&t.c!==an.O[i-1].c)h+='<br><br>';const s=an.st[i],o=an.gid[i]!=null&&ov.includes(an.gid[i]);h+=`<span class="t ${s==='ok'||o?'ok':s==='wrong'||s==='bad'?'bad':'am'}">${esc(t.w)}</span> `});return h}
+function respHTML(an,s,ro){let h='';const man=!ro&&S.cfg.fix==='manual',ov=s.ov;
+for(const p of an.u){if(p.t==='eq'){const w=an.R[p.j].w,soft=an.mode!=='exact'&&p.i>=0&&an.O[p.i].w!==w;h+=`<span class="t ${soft?'n':'ok'}">${esc(w)}</span> `;continue}
+ const rw=p.I.map(j=>an.R[p.j===undefined?j:j].w).join(' '),exp=p.D.map(i=>an.O[i].w).join(' ');
+ if(p.neutral){h+=`<span class="t n">${esc(rw)}</span> `;continue}
+ if(ov.includes(p.id)){h+=`<span class="t ok">${esc(rw||exp)}</span> `;continue}
+ if(p.kind==='wrong')h+=`<span class="t bad">${esc(rw)}</span> `;else if(p.kind==='miss')h+=`<span class="t am">[missing]</span> `;else h+=`<span class="t bad x">${esc(rw)}</span> `;
+ if(exp){const ty=s.typed[p.id];h+=!man||(ty!=null&&nk(ty)===nk(exp))?`<span class=fx>${esc(exp)}</span> `:`<span class=pen><input data-g="${p.id}" data-x="${esc(exp)}" value="${esc(ty||'')}" size="${Math.max(10,exp.length)}" placeholder="type the correct text"></span>`+(ro?'':`<button class=ovb data-a=rev data-g="${p.id}">show</button>`)}
+ if(!ro)h+=`<button class=ovb data-a=ovr data-g="${p.id}" title="Mark my answer as acceptable">mine is fine</button> `}return h}
+function sess(s){const set=gs(s.setId),tx=txt(set,s.ids),ix={memo:0,recall:1,compare:2}[s.phase];
+let h=`<div class=row><div class=steps>${['Memorise','Recall','Compare'].map((x,i)=>`<span class="${i===ix?'on':''}">${x}</span>`).join('')}</div><span class=mu>${esc(set.name)}, round ${s.round+1}</span><span class=sp></span><button class="btn g" data-a=exit>Save and exit</button></div>`;
+if(s.phase==='memo'){const full=s.ids.length===set.chunks.length&&set.chunks.map(c=>c.t).join('\n\n')===mkChunks(set.text,'paragraph').join('\n\n')?set.text:tx.join('\n\n');
+ return h+`<div class=card><div class=row><b>${s.round?'Brief review':'Memorise'}</b><span class=sp></span><b id=tm></b></div><div class=track><i id=bar></i></div><div id=mat class=mat>${esc(full)}</div><div class=row><button class="btn p" data-a=go>I'm ready, hide it</button><button class=btn data-a=more>+10s</button></div></div>`}
+if(s.phase==='recall')return h+`<div class=card><div class=row><b>Write everything you remember</b><span class=sp></span><span class=mu id=wcn></span></div><textarea id=draft placeholder="Start typing from memory…" autofocus>${esc(s.draft)}</textarea><div class=row><button class="btn p" data-a=done>Done</button><span class=mu>Saved automatically. ${s.ids.length<set.chunks.length?'Targeted: only the selected chunks are tested.':''}</span></div></div>`;
+const an=analyze(tx,s.resp,s.mode),sc=score(an,s.ov),open=an.gaps.filter(g=>!s.ov.includes(g.id)),bad=new Set(open.flatMap(g=>g.D.map(i=>an.O[i].c)));
+const fixed=open.filter(g=>g.D.length&&s.typed[g.id]!=null&&nk(s.typed[g.id])===nk(g.D.map(i=>an.O[i].w).join(' '))).length;
+return h+`<div class=row><div class=stat><b>${pct(sc.acc)}</b>${s.mode} accuracy</div>${sc.ex!=null?`<div class=stat><b>${pct(sc.ex)}</b>exact wording</div>`:''}<div class=stat><b>${open.length}</b>to fix${S.cfg.fix==='manual'?` (${fixed} typed)`:''}</div><span class=sp></span><select id=mode style="width:auto">${['balanced','exact','factual','conceptual'].map(m=>`<option ${m===s.mode?'selected':''}>${m}</option>`).join('')}</select><select id=fix style="width:auto"><option value=manual ${S.cfg.fix==='manual'?'selected':''}>Manual correction</option><option value=auto ${S.cfg.fix==='auto'?'selected':''}>Automatic correction</option></select></div>
+<div class=mu style="font-size:.85rem"><span class="t ok">correct</span> <span class="t bad">incorrect</span> <span class="t am">missing</span> <span class="t n">harmless difference</span>. The original is always the source of truth.</div>
+<div class=cols><div class=card><h2>Original</h2><div class=pane>${origHTML(an,s.ov)}</div></div><div class=card><h2>Your answer</h2><div class=pane>${respHTML(an,s,0)||'<span class=mu>(blank)</span>'}</div></div></div>
+<div class=card><h2>Next step</h2><div class=row><button class=btn data-a=csel data-m=all>All chunks</button><button class=btn data-a=csel data-m=weak>Chunks with mistakes</button></div>${s.ids.map((id,ci)=>`<label class=cb><input type=checkbox class=cb-i value="${id}" ${bad.has(ci)||!bad.size?'checked':''}><span>${esc(txt(set,[id])[0].slice(0,100))} <span class="${bad.has(ci)?'neg':'pos'}">${pct((sc.pc[ci]||[0,1])[0]/(sc.pc[ci]||[0,1])[1])}</span></span></label>`).join('')}
+<div class=row><button class=btn data-a=next data-k=brief>Brief review (${Math.max(3,Math.round(secsFor(wc(tx.join(' ')))*Math.pow(S.cfg.decay,s.round+1)))}s)</button><button class=btn data-a=next data-k=pure>Pure retrieval</button><button class=btn data-a=next data-k=spaced>Spaced retrieval (schedule)</button><button class="btn p" data-a=next data-k=fin>Finish</button></div></div>`}
+function insp(s,i){const x=s.att[i],an=analyze(x.tx,x.resp,x.mode),f={typed:{},ov:x.ov};
+return`<button class="btn g" data-a=open data-id="${s.id}">Back</button><h1>Attempt #${i+1}</h1><div class=mu>${dt(x.t)}, ${x.mode} mode, ${pct(x.acc)} accuracy${x.ex!=null?', '+pct(x.ex)+' exact':''}</div><div class=cols><div class=card><h2>Original</h2><div class=pane>${origHTML(an,x.ov)}</div></div><div class=card><h2>Your answer</h2><div class=pane>${respHTML(an,f,1)}</div></div></div>`}
+function settings(){const c=S.cfg;return`<button class="btn g" data-a=home>Back</button><h1>Settings</h1><div class=card>
+<label>Default assessment mode</label><select id=c-mode>${['balanced','exact','factual','conceptual'].map(m=>`<option ${c.mode===m?'selected':''}>${m}</option>`).join('')}</select>
+<label>Memorisation time multiplier (1 = suggested times)</label><input id=c-scale type=number step=.1 min=.2 max=5 value="${c.scale}">
+<label>Brief review shrink factor per round (0.5 = halves each time)</label><input id=c-decay type=number step=.1 min=.1 max=1 value="${c.decay}">
+<label>Spaced intervals (m, h or d, comma separated)</label><input id=c-ivl value="${esc(c.ivl)}">
+<label>Default correction style</label><select id=c-fix><option value=manual ${c.fix==='manual'?'selected':''}>Manual (type the fix)</option><option value=auto ${c.fix==='auto'?'selected':''}>Automatic</option></select>
+<label>Default chunking</label><select id=c-chunk>${['paragraph','sentence','whole'].map(m=>`<option ${c.chunk===m?'selected':''}>${m}</option>`).join('')}</select>
+<label>Theme</label><select id=c-theme><option ${c.theme==='dark'?'selected':''}>dark</option><option ${c.theme==='light'?'selected':''}>light</option></select>
+<label>Animations</label><select id=c-anim><option value=1 ${c.anim?'selected':''}>On</option><option value=0 ${c.anim?'':'selected'}>Off</option></select>
+<div class=row><button class="btn p" data-a=savecfg>Save settings</button></div></div>`}
+function render(){const y=scrollY,r=$('#app');document.documentElement.dataset.theme=S.cfg.theme;document.body.classList.toggle('noanim',!S.cfg.anim);
+let s=S.session;if(view.n==='session'&&!s)view={n:'home'};if(view.n==='session'&&s.phase==='memo'&&s.deadline<=Date.now()){s.phase='recall';save()}
+const set=view.id&&gs(view.id);if(['set','insp','edit'].includes(view.n)&&view.n!=='edit'&&!set)view={n:'home'};
+r.innerHTML=({home:()=>home(),session:()=>sess(s),edit:()=>edit(view.id),set:()=>setPage(set),insp:()=>insp(set,view.i),cfg:()=>settings()})[view.n]();
+if(view.n==='session'&&s.phase==='recall'){const d=$('#draft'),w=()=>$('#wcn').textContent=wc(d.value)+' words';w();d.focus()}scrollTo(0,y)}
+setInterval(()=>{const s=S.session;if(!s||s.phase!=='memo'||view.n!=='session')return;const l=(s.deadline-Date.now())/1e3,t=$('#tm');if(!t)return;t.textContent=Math.max(0,Math.ceil(l))+'s';$('#bar').style.width=Math.max(0,l/s.secs*100)+'%';
+if(l<=0&&!fading){fading=1;$('#mat').classList.add('fade');setTimeout(()=>{fading=0;if(S.session===s&&s.phase==='memo'){s.phase='recall';save();render()}},S.cfg.anim?900:0)}},200);
+const sel=()=>[...document.querySelectorAll('.cb-i:checked')].map(e=>e.value);
+Object.assign(A,{home:()=>go('home'),new:()=>go('edit'),set:()=>go('cfg'),open:b=>go('set',b.dataset.id),edit:b=>go('edit',b.dataset.id),resume:()=>go('session'),
+discard:()=>{S.session=null;save();render()},exit:()=>{save();go('home')},
+due:b=>{const s=gs(b.dataset.id);start(s.id,s.chunks.filter(c=>c.last&&c.due<=Date.now()).map(c=>c.id),1)},
+startsel:b=>start(b.dataset.id,sel(),!!b.dataset.skip),
+selall:()=>document.querySelectorAll('.cb-i').forEach(e=>e.checked=1),
+selweak:()=>{const s=gs(view.id);document.querySelectorAll('.cb-i').forEach(e=>e.checked=Object.entries(s.miss).some(([k,m])=>k.startsWith(e.value+'|')&&m.n>m.ok))},
+seldue:()=>{const s=gs(view.id);document.querySelectorAll('.cb-i').forEach(e=>{const c=s.chunks.find(x=>x.id===e.value);e.checked=c.last&&c.due<=Date.now()})},
+del:b=>{if(ask===b.dataset.id){S.sets=S.sets.filter(x=>x.id!==b.dataset.id);if(S.session?.setId===b.dataset.id)S.session=null;save();go('home')}else{ask=b.dataset.id;render()}},
+insp:b=>{view={n:'insp',id:b.dataset.id,i:+b.dataset.i};render();scrollTo(0,0)},
+saveset:b=>{const id=b.dataset.id,text=$('#f-text').value;if(!text.trim())return toast('Add some material first');let s=id?gs(id):null;const cm=$('#f-ch').value,name=$('#f-name').value.trim()||text.trim().split(/\s+/).slice(0,4).join(' ');
+if(!s){s={id:uid(),created:Date.now(),att:[],miss:{},chunks:[]};S.sets.push(s)}
+const ch=$('#f-chunks'),manual=ch&&ch.value!==s.chunks.map(c=>c.t).join('\n===\n');
+if(manual){const a=ch.value.split(/\n===\n|^===$/m).map(x=>x.trim()).filter(Boolean);if(!a.length)return toast('Keep at least one chunk');setChunks(s,a)}else if(!s.chunks.length||s.text!==text||s.cm!==cm)setChunks(s,mkChunks(text,cm));
+Object.assign(s,{name,subject:$('#f-sub').value.trim(),text,cm});if(S.session?.setId===s.id)S.session=null;save();go('set',s.id)},
+go:()=>{S.session.phase='recall';save();render()},more:()=>{S.session.deadline+=1e4;S.session.secs+=10;save()},
+done:()=>{const s=S.session;s.resp=$('#draft').value;s.phase='compare';save();render()},
+ovr:b=>{const s=S.session,g=+b.dataset.g;if(!s.ov.includes(g))s.ov.push(g);save();render()},
+rev:b=>{const s=S.session,an=analyze(txt(gs(s.setId),s.ids),s.resp,s.mode),g=an.u[+b.dataset.g];s.typed[g.id]=g.D.map(i=>an.O[i].w).join(' ');save();render()},
+csel:b=>{const s=S.session,set=gs(s.setId),an=analyze(txt(set,s.ids),s.resp,s.mode),bad=new Set(an.gaps.filter(g=>!s.ov.includes(g.id)).flatMap(g=>g.D.map(i=>an.O[i].c)));document.querySelectorAll('.cb-i').forEach((e,i)=>e.checked=b.dataset.m==='all'||bad.has(i))},
+next:b=>{const s=S.session,set=gs(s.setId),k=b.dataset.k,ids=sel().length?sel():s.ids;finalize(s);
+ if(k==='fin'||k==='spaced'){S.session=null;save();const n=set.chunks.filter(c=>c.last).map(c=>c.due).sort((x,y)=>x-y)[0];toast(k==='spaced'?'Scheduled. Next retrieval in '+when(n):'Session saved');return go('set',set.id)}
+ const secs=Math.max(3,Math.round(secsFor(wc(txt(set,ids).join(' ')))*Math.pow(S.cfg.decay,s.round+1)));
+ Object.assign(s,{ids:set.chunks.filter(c=>ids.includes(c.id)).map(c=>c.id),round:s.round+1,resp:'',draft:'',ov:[],typed:{},fin:0,phase:k==='brief'?'memo':'recall',secs,deadline:Date.now()+secs*1e3});save();render();scrollTo(0,0)},
+savecfg:()=>{const c=S.cfg;Object.assign(c,{mode:$('#c-mode').value,scale:Math.min(5,Math.max(.2,+$('#c-scale').value||1)),decay:Math.min(1,Math.max(.1,+$('#c-decay').value||.5)),ivl:$('#c-ivl').value,fix:$('#c-fix').value,chunk:$('#c-chunk').value,theme:$('#c-theme').value,anim:$('#c-anim').value==='1'});
+ if(!ivls().length||!/\d/.test(c.ivl))c.ivl=DEF.cfg.ivl;save();toast('Settings saved');render()}});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b&&A[b.dataset.a])A[b.dataset.a](b)});
+document.addEventListener('input',e=>{const t=e.target,s=S.session;if(t.id==='draft'){s.draft=t.value;$('#wcn').textContent=wc(t.value)+' words';save()}
+ else if(t.dataset&&t.dataset.g!=null&&s){s.typed[t.dataset.g]=t.value;save();if(nk(t.value)===nk(t.dataset.x)){toast('Corrected');render()}}});
+document.addEventListener('change',e=>{const s=S.session;if(e.target.id==='mode'){s.mode=e.target.value;s.ov=[];s.typed={};save();render()}else if(e.target.id==='fix'){S.cfg.fix=e.target.value;save();render()}});
+if(S.session)view={n:'session'};render();
+</script></body></html>
